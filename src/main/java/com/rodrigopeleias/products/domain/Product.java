@@ -16,6 +16,7 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     @NotNull(message = "Product name field is required")
     private String name;
 
@@ -27,7 +28,7 @@ public class Product implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Product parentProduct;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Image> images;
 
