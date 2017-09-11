@@ -1,4 +1,4 @@
-package com.rodrigopeleias.products.endpoint;
+package com.rodrigopeleias.products.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
