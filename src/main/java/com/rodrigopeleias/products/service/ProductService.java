@@ -1,15 +1,12 @@
 package com.rodrigopeleias.products.service;
 
 import com.rodrigopeleias.products.domain.Product;
-import com.rodrigopeleias.products.dto.ProductDTO;
 import com.rodrigopeleias.products.exception.ProductNotFoundException;
 import com.rodrigopeleias.products.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,29 +38,12 @@ public class ProductService {
         return savedProduct;
     }
 
-    public List<ProductDTO> findAll() {
-        List<ProductDTO> productsDTO = new ArrayList<>();
-        List<Product> products = productRepository.findAll();
-        products.forEach(product -> {
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setId(product.getId());
-            productDTO.setName(product.getName());
-            productDTO.setDescription(product.getDescription());
-            productsDTO.add(productDTO);
-        });
-        return productsDTO;
+    public List<Product> findAll() {
+        return productRepository.findAll();
     }
 
-    public ProductDTO findById(Long productId) {
-        Product product = productRepository.findOne(productId);
-        if (product == null) {
-            throw new ProductNotFoundException(productId.toString());
-        }
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId(product.getId());
-        productDTO.setName(product.getName());
-        productDTO.setDescription(product.getDescription());
-        return productDTO;
+    public Product findById(Long productId) {
+        return productRepository.findOne(productId);
     }
 
 }

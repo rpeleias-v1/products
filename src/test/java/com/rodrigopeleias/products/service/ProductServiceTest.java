@@ -1,13 +1,11 @@
 package com.rodrigopeleias.products.service;
 
 import com.rodrigopeleias.products.domain.Product;
-import com.rodrigopeleias.products.dto.ProductDTO;
 import com.rodrigopeleias.products.exception.ProductNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -58,7 +56,7 @@ public class ProductServiceTest {
         productService.update(20L, product);
     }
 
-    @Test(expected = ProductNotFoundException.class)
+    @Test
     public void shouldDeleteAnExistingProduct() {
         Product product = new Product();
         product.setName("Delete test");
