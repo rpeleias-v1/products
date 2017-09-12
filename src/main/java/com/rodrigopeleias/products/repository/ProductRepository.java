@@ -29,5 +29,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Product findWithImagesAndParentProductByProductId(Long productId);
 
     @Query("select p.parentProduct from Product p where p.id = ?1")
-    Product findParentProductByProductId(Long productId);
+    List<Product> findParentProductsByProductId(Long productId);
 }

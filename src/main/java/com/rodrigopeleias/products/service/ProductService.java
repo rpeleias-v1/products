@@ -66,9 +66,9 @@ public class ProductService {
         return productRepository.findWithImagesAndParentProductByProductId(savedProduct.getId());
     }
 
-    public Product findParentProductByProductId(Long productId) {
+    public List<Product> findParentProductByProductId(Long productId) {
         Product savedProduct = findProductOrThrowException(productId);
-        return productRepository.findParentProductByProductId(savedProduct.getId());
+        return productRepository.findParentProductsByProductId(savedProduct.getId());
     }
 
     Product findProductOrThrowException(Long productId) {
