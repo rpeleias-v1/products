@@ -20,7 +20,7 @@ public class Image implements Serializable {
     private String type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = " parent_product_id")
+    @JoinColumn(name = "product_id")
     @JsonIgnore
     private Product product;
 
