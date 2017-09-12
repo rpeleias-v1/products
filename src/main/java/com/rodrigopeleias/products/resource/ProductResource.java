@@ -30,7 +30,7 @@ public class ProductResource {
     public Response create(@Valid Product product) {
         product = productService.save(product);
         URI build = UriBuilder.fromPath("products/{productId}").build(product.getId());
-        return Response.created(build).build();
+        return Response.created(build).entity(product).build();
     }
 
     @PUT
@@ -69,7 +69,7 @@ public class ProductResource {
     public Response createImage(@PathParam("productId") Long productId, @Valid Image image) {
         image = imageService.save(productId, image);
         URI build = UriBuilder.fromPath("products/{productId}/image/{imageId}").build(productId, image.getId());
-        return Response.created(build).build();
+        return Response.created(build).entity(image).build();
     }
 
     @PUT
@@ -83,7 +83,7 @@ public class ProductResource {
     @DELETE
     @Path("/{productId}/images/{imageId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteProduct(@PathParam("productId") Long productId, @PathParam("imageId") Long imageId) {
+    public Response deleteImage(@PathParam("productId") Long productId, @PathParam("imageId") Long imageId) {
         imageService.delete(productId, imageId);
         return Response.noContent().build();
     }

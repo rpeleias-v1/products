@@ -1,5 +1,6 @@
 package com.rodrigopeleias.products.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -20,6 +21,7 @@ public class Image implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = " parent_product_id")
+    @JsonIgnore
     private Product product;
 
     public Long getId() {

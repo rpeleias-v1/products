@@ -1,6 +1,7 @@
 package com.rodrigopeleias.products.service;
 
 import com.rodrigopeleias.products.domain.Product;
+import com.rodrigopeleias.products.dto.ProductDTO;
 import com.rodrigopeleias.products.exception.ProductNotFoundException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +58,7 @@ public class ProductServiceTest {
         productService.update(20L, product);
     }
 
-    @Test
+    @Test(expected = ProductNotFoundException.class)
     public void shouldDeleteAnExistingProduct() {
         Product product = new Product();
         product.setName("Delete test");
@@ -66,8 +67,7 @@ public class ProductServiceTest {
         Product savedProduct = productService.save(product);
         productService.delete(savedProduct.getId());
 
-        Product deletedProduct = productService.findById(product.getId());
-        assertThat(deletedProduct, nullValue());
+        productService.findById(product.getId());
     }
 
     @Test(expected = ProductNotFoundException.class)
