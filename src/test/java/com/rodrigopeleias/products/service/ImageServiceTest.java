@@ -27,24 +27,25 @@ public class ImageServiceTest {
     private ProductService productService;
 
     private Product savedProduct;
+    private Image image;
 
     @Before
     public void setup() {
         Product product = new Product();
         product.setName("New product");
         product.setDescription("Description");
-
         savedProduct = productService.save(product);
+
+        image = new Image();
+        image.setType(".JPEG");
+        image = imageService.save(this.savedProduct.getId(), image);
     }
 
     @Test
     public void shouldCreateImageAssociatedWithProduct() {
-        Image image = new Image();
-        image.setType(".JPEG");
-        Image savedImage = imageService.save(this.savedProduct.getId(), image);
-        assertThat(savedImage.getId(), notNullValue());
-        assertThat(savedImage.getType(), equalTo(image.getType()));
-        assertThat(savedImage.getProduct(), notNullValue());
+        assertThat(image.getId(), notNullValue());
+        assertThat(image.getType(), equalTo(image.getType()));
+        assertThat(image.getProduct(), notNullValue());
     }
 
     @Test(expected = ProductNotFoundException.class)

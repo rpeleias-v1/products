@@ -5,6 +5,7 @@ import com.rodrigopeleias.products.exception.ProductNotFoundException;
 import com.rodrigopeleias.products.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,14 +31,6 @@ public class ProductService {
         productRepository.delete(productId);
     }
 
-    private Product findProductOrThrowException(Long productId) {
-        Product savedProduct = productRepository.findOne(productId);
-        if (savedProduct == null) {
-            throw new ProductNotFoundException(productId.toString());
-        }
-        return savedProduct;
-    }
-
     public List<Product> findAll() {
         return productRepository.findAll();
     }
@@ -46,4 +39,43 @@ public class ProductService {
         return productRepository.findOne(productId);
     }
 
+    public List<Product> findAllWithImages() {
+        return productRepository.findAllWithImages();
+    }
+
+    public List<Product> findAllWithParentProduct() {
+        return productRepository.findAllWithParentProduct();
+    }
+
+    public List<Product> findAllWithImagesAndParentProduct() {
+        return productRepository.findAllWithImagesAndParentProduct();
+    }
+
+    public Product findWithImagesByProductId(Long productId) {
+        Product savedProduct = findProductOrThrowException(productId);
+        return productRepository.findWithImagesByProductId(savedProduct.getId());
+    }
+
+    public Product findWithParentProductByProductId(Long productId) {
+        Product savedProduct = findProductOrThrowException(productId);
+        return productRepository.findWithParentProductByProductId(savedProduct.getId());
+    }
+
+    public Product findWithImagesAndParentProductByProductId(Long productId) {
+        Product savedProduct = findProductOrThrowException(productId);
+        return productRepository.findWithImagesAndParentProductByProductId(savedProduct.getId());
+    }
+
+    public Product findParentProductByProductId(Long productId) {
+        Product savedProduct = findProductOrThrowException(productId);
+        return productRepository.findParentProductByProductId(savedProduct.getId());
+    }
+
+    Product findProductOrThrowException(Long productId) {
+        Product savedProduct = productRepository.findOne(productId);
+        if (savedProduct == null) {
+            throw new ProductNotFoundException(productId.toString());
+        }
+        return savedProduct;
+    }
 }

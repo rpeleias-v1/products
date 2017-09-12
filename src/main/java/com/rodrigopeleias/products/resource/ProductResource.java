@@ -51,14 +51,14 @@ public class ProductResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll() {
+    public Response getAllProducts() {
         return Response.ok(productService.findAll()).build();
     }
 
     @GET
     @Path("/{productId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getById(@PathParam("productId") Long productId) {
+    public Response getProductById(@PathParam("productId") Long productId) {
         return Response.ok(productService.findById(productId)).build();
     }
 

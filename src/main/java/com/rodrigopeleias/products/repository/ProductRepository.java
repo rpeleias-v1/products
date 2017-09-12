@@ -13,10 +13,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p join fetch p.images im")
     List<Product> findAllWithImages();
 
-    @Query("select p from Product p join fetch p.parentProduct p")
+    @Query("select p from Product p join fetch p.parentProduct pp")
     List<Product> findAllWithParentProduct();
 
-    @Query("select p from Product p join fetch p.parentProduct p join fetch p.images im")
+    @Query("select p from Product p join fetch p.parentProduct pp join fetch p.images im")
     List<Product> findAllWithImagesAndParentProduct();
 
+    @Query("select p from Product p join fetch p.images im where p.id = ?1")
+    Product findWithImagesByProductId(Long productId);
+
+    @Query("select p from Product p join fetch p.parentProduct pp where p.id = ?1")
+    Product findWithParentProductByProductId(Long productId);
+
+    @Query("select p from Product p join fetch p.parentProduct pp join fetch p.images im where p.id = ?1")
+    Product findWithImagesAndParentProductByProductId(Long productId);
+
+    @Query("select p.parentProduct from Product p where p.id = ?1")
+    Product findParentProductByProductId(Long productId);
 }

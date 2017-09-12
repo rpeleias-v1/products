@@ -16,36 +16,33 @@ import java.util.List;
 public class ImageService {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @Autowired
     private ImageRepository imageRepository;
 
     public Image save(Long productId, Image image) {
-        Product product = findProductOrThrowException(productId);
+        Product product = productService.findProductOrThrowException(productId);
         image.setProduct(product);
         return imageRepository.save(image);
     }
 
     public Image update(Long productId, Long imageId, Image image) {
-        findProductOrThrowException(productId);
+        productService.findProductOrThrowException(productId);
         Image savedImage = findImageOrThrowException(imageId);
         BeanUtils.copyProperties(image, savedImage);
         return imageRepository.save(savedImage);
     }
 
     public void delete(Long productId, Long imageId) {
-        findProductOrThrowException(productId);
+        productService.findProductOrThrowException(productId);
         findImageOrThrowException(imageId);
         imageRepository.delete(imageId);
     }
 
-    private Product findProductOrThrowException(Long productId) {
-        Product savedProduct = productRepository.findOne(productId);
-        if (savedProduct == null) {
-            throw new ProductNotFoundException(productId.toString());
-        }
-        return savedProduct;
+    public List<Image> findByProduct(Long productId) {
+        Product product = productService.findProductOrThrowException(productId);
+        return imageRepository.findByProduct(product);
     }
 
     private Image findImageOrThrowException(Long imageId) {
