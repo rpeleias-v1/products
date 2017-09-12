@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "product")
@@ -16,7 +17,6 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     @NotNull(message = "Product name field is required")
     private String name;
 
@@ -71,4 +71,5 @@ public class Product implements Serializable {
     public void setImages(List<Image> images) {
         this.images = images;
     }
+
 }
