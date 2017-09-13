@@ -2,7 +2,6 @@ package com.rodrigopeleias.products.repository;
 
 import com.rodrigopeleias.products.domain.Image;
 import com.rodrigopeleias.products.domain.Product;
-import com.rodrigopeleias.products.exception.ProductNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,9 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -63,7 +60,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void shouldFindAllProductsWithParentProduct() {
+    public void shouldFindAllProductsWithChildProducts() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
@@ -75,26 +72,26 @@ public class ProductRepositoryTest {
         childProduct.setParentProduct(product);
         productRepository.save(childProduct);
 
-        List<Product> products = productRepository.findAllWithParentProduct();
+        List<Product> products = productRepository.findAllWithChildProducts();
 
         assertThat(products.size(), is(2));
-        assertThat(products.get(1).getParentProduct(), notNullValue());
+        assertThat(products.get(0).getChildProducts().size(), is(1));
     }
 
     @Test
-    public void shouldFindAllProductsWithoutParentProduct() {
+    public void shouldFindAllProductsWithoutChildProduct() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
         productRepository.save(product);
-        List<Product> products = productRepository.findAllWithParentProduct();
+        List<Product> products = productRepository.findAllWithChildProducts();
 
         assertThat(products.size(), is(1));
-        assertThat(products.get(0).getParentProduct(), nullValue());
+        assertThat(products.get(0).getChildProducts().size(), is(0));
     }
 
     @Test
-    public void shouldFindAllProductsWithImagesAndParentProduct() {
+    public void shouldFindAllProductsWithImagesAndChildProducts() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
@@ -111,24 +108,24 @@ public class ProductRepositoryTest {
         image.setProduct(product);
         imageRepository.save(image);
 
-        List<Product> productsWithImagesAndParentProducts = productRepository.findAllWithImagesAndParentProduct();
+        List<Product> products = productRepository.findAllWithImagesAndChildProducts();
 
-        assertThat(productsWithImagesAndParentProducts.size(), is(2));
-        assertThat(productsWithImagesAndParentProducts.get(0).getImages().size(), is(1));
-        assertThat(productsWithImagesAndParentProducts.get(1).getParentProduct(), notNullValue());
+        assertThat(products.size(), is(2));
+        assertThat(products.get(0).getImages().size(), is(1));
+        assertThat(products.get(0).getChildProducts().size(), is(1));
     }
 
     @Test
-    public void shouldFindAllProductsWithoutImagesParentProduct() {
+    public void shouldFindAllProductsWithoutImagesChildProducts() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
         productRepository.save(product);
-        List<Product> products = productRepository.findAllWithImagesAndParentProduct();
+        List<Product> products = productRepository.findAllWithImagesAndChildProducts();
 
         assertThat(products.size(), is(1));
         assertThat(products.get(0).getImages().size(), is(0));
-        assertThat(products.get(0).getParentProduct(), nullValue());
+        assertThat(products.get(0).getChildProducts().size(), is(0));
     }
 
     @Test
@@ -161,7 +158,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void shouldFindProductByIdWithParentProduct() {
+    public void shouldFindProductByIdWithChildProducts() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
@@ -173,26 +170,26 @@ public class ProductRepositoryTest {
         childProduct.setParentProduct(product);
         productRepository.save(childProduct);
 
-        product = productRepository.findWithParentProductByProductId(product.getId());
+        product = productRepository.findWithChildProductsByProductId(product.getId());
 
         assertThat(product, notNullValue());
-        assertThat(childProduct.getParentProduct(), notNullValue());
+        assertThat(product.getChildProducts().size(), is(1));
     }
 
     @Test
-    public void shouldFindProductByIdWithoutParentProduct() {
+    public void shouldFindProductByIdWithoutChildProducts() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
         product = productRepository.save(product);
-        product = productRepository.findWithImagesByProductId(product.getId());
+        product = productRepository.findWithChildProductsByProductId(product.getId());
 
         assertThat(product, notNullValue());
-        assertThat(product.getParentProduct(), nullValue());
+        assertThat(product.getChildProducts().size(), is(0));
     }
 
     @Test
-    public void shouldFindProductByIdWithImagesAndParentProduct() {
+    public void shouldFindProductByIdWithImagesAndChildProducts() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
@@ -209,15 +206,15 @@ public class ProductRepositoryTest {
         image.setProduct(product);
         imageRepository.save(image);
 
-        product = productRepository.findWithImagesAndParentProductByProductId(product.getId());
+        product = productRepository.findWithImagesAndChildProductsByProductId(product.getId());
 
         assertThat(product, notNullValue());
         assertThat(product.getImages().size(), is(1));
-        assertThat(childProduct.getParentProduct(), notNullValue());
+        assertThat(product.getChildProducts().size(), is(1));
     }
 
     @Test
-    public void shouldFindParentProductByProductId() {
+    public void shouldFindChildProductsByProductId() {
         Product product = new Product();
         product.setName("Computer");
         product.setDescription("A personal computer");
@@ -228,8 +225,14 @@ public class ProductRepositoryTest {
         childProduct.setDescription("A computer mouse");
         childProduct.setParentProduct(product);
         productRepository.save(childProduct);
-        Product parentProduct = productRepository.findParentProductsByProductId(childProduct.getId());
 
-        assertThat(parentProduct, notNullValue());
+        Product otherChildProducts = new Product();
+        otherChildProducts.setName("Keyboard");
+        otherChildProducts.setDescription("A computer keyboard");
+        otherChildProducts.setParentProduct(product);
+        productRepository.save(otherChildProducts);
+        List<Product> childProducts = productRepository.findChildProductsByProductId(product.getId());
+
+        assertThat(childProducts.size(), is(2));
     }
 }

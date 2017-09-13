@@ -16,6 +16,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -127,7 +128,7 @@ public class ProductServiceTest extends BaseTest{
         childProduct.setParentProduct(product);
         productService.save(childProduct);
 
-        List<Product> products = productService.findAllWithParentProduct();
+        List<Product> products = productService.findAllWithChildProducts();
         assertThat(products.size(), is(2));
         assertThat(products.get(1).getParentProduct(),notNullValue());
     }
@@ -150,7 +151,7 @@ public class ProductServiceTest extends BaseTest{
         childProduct.setParentProduct(product);
         productService.save(childProduct);
 
-        List<Product> products = productService.findAllWithImagesAndParentProduct();
+        List<Product> products = productService.findAllWithImagesAndChildProducts();
         assertThat(products.size(), is(2));
         assertThat(products.get(1).getParentProduct(),notNullValue());
         assertThat(products.get(0).getImages().size(), is(1));
@@ -191,14 +192,14 @@ public class ProductServiceTest extends BaseTest{
         childProduct.setParentProduct(product);
         productService.save(childProduct);
 
-        Product savedProduct = productService.findWithParentProductByProductId(childProduct.getId());
+        Product savedProduct = productService.findWithChildProductsByProductId(childProduct.getId());
         assertThat(savedProduct, notNullValue());
         assertThat(savedProduct.getParentProduct(),notNullValue());
     }
 
     @Test(expected = ProductNotFoundException.class)
     public void shouldThrowExceptionWhenFindInvalidProductWithParentProduct() {
-        productService.findWithParentProductByProductId(1000L);
+        productService.findWithChildProductsByProductId(1000L);
     }
 
     @Test
@@ -219,7 +220,7 @@ public class ProductServiceTest extends BaseTest{
         jpeg.setProduct(childProduct);
         imageRepository.save(jpeg);
 
-        Product savedProduct = productService.findWithImagesAndParentProductByProductId(childProduct.getId());
+        Product savedProduct = productService.findWithImagesAndChildProductsByProductId(childProduct.getId());
         assertThat(savedProduct, notNullValue());
         assertThat(savedProduct.getParentProduct(),notNullValue());
         assertThat(savedProduct.getImages().size(), is(1));
@@ -227,7 +228,7 @@ public class ProductServiceTest extends BaseTest{
 
     @Test(expected = ProductNotFoundException.class)
     public void shouldThrowExceptionWhenFindInvalidProductWithImagesAndParentProduct() {
-        productService.findWithImagesAndParentProductByProductId(1000L);
+        productService.findWithImagesAndChildProductsByProductId(1000L);
     }
 
     @Test
@@ -243,13 +244,14 @@ public class ProductServiceTest extends BaseTest{
         childProduct.setParentProduct(product);
         productService.save(childProduct);
 
-        Product parentProduct = productService.findParentProductByProductId(childProduct.getId());
-        assertThat(parentProduct, notNullValue());
+        List<Product> childProducts = productService.findChildProductsByProductId(product.getId());
+
+        assertThat(childProducts.size(), is(1));
     }
 
     @Test(expected = ProductNotFoundException.class)
     public void shouldThrowExceptionWhenFindParentProductByInvalidProductId() {
-        productService.findParentProductByProductId(1000L);
+        productService.findChildProductsByProductId(1000L);
     }
 
 

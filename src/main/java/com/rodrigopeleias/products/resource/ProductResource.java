@@ -87,4 +87,75 @@ public class ProductResource {
         imageService.delete(productId, imageId);
         return Response.noContent().build();
     }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProductsExcludingRelationships() {
+        return Response.ok(productService.findAll()).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductByIdExcludingRelationships(@PathParam("id") Long productId) {
+        return Response.ok(productService.findById(productId)).build();
+    }
+
+    @GET
+    @Path("/images")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProductsWithImages() {
+        return Response.ok(productService.findAllWithImages()).build();
+    }
+
+    @GET
+    @Path("/{id}/images")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductByIdWithImages(@PathParam("id") Long productId) {
+        return Response.ok(productService.findWithImagesByProductId(productId)).build();
+    }
+
+    @GET
+    @Path("/childProducts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProductsWithChildProducts() {
+        return Response.ok(productService.findAllWithChildProducts()).build();
+    }
+
+    @GET
+    @Path("/{id}/images/childProducts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductByIdWithImagesAndChildProducts(@PathParam("id") Long productId) {
+        return Response.ok(productService.findWithImagesAndChildProductsByProductId(productId)).build();
+    }
+
+    @GET
+    @Path("/images/childProducts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllProductsWithImagesAndChildProducts() {
+        return Response.ok(productService.findAllWithImagesAndChildProducts()).build();
+    }
+
+    @GET
+    @Path("/{id}/childProducts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductByIdWithChildProducts(@PathParam("id") Long productId) {
+        return Response.ok(productService.findWithChildProductsByProductId(productId)).build();
+    }
+
+    @GET
+    @Path("/{id}/childProducts/set")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSetOfChildProductsByProductId(@PathParam("id") Long productId) {
+        return Response.ok(productService.findChildProductsByProductId(productId)).build();
+    }
+
+    @GET
+    @Path("/{id}/images/set")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSetOfImagesByProductId(@PathParam("id") Long productId) {
+        return Response.ok(imageService.findByProduct(productId)).build();
+    }
+
+
 }

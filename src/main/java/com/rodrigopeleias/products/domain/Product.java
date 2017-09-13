@@ -2,6 +2,8 @@ package com.rodrigopeleias.products.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
@@ -29,9 +32,11 @@ public class Product implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Product parentProduct;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentProduct")
+    private Set<Product> childProducts;
+
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    @JsonView
     private List<Image> images = new ArrayList<>();
 
     public Long getId() {
@@ -74,4 +79,11 @@ public class Product implements Serializable {
         this.images = images;
     }
 
+    public Set<Product> getChildProducts() {
+        return childProducts;
+    }
+
+    public void setChildProducts(Set<Product> childProducts) {
+        this.childProducts = childProducts;
+    }
 }

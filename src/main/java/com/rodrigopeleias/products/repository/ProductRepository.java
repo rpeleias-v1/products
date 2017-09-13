@@ -13,21 +13,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p from Product p left join fetch p.images im")
     List<Product> findAllWithImages();
 
-    @Query("select p from Product p left join fetch p.parentProduct pp")
-    List<Product> findAllWithParentProduct();
+    @Query("select p from Product p left join fetch p.childProducts cp")
+    List<Product> findAllWithChildProducts();
 
-    @Query("select p from Product p left join fetch p.parentProduct pp left join fetch p.images im")
-    List<Product> findAllWithImagesAndParentProduct();
+    @Query("select p from Product p left join fetch p.childProducts cp left join fetch p.images im")
+    List<Product> findAllWithImagesAndChildProducts();
 
     @Query("select p from Product p left join fetch p.images im where p.id = ?1")
     Product findWithImagesByProductId(Long productId);
 
-    @Query("select p from Product p left join fetch p.parentProduct pp where p.id = ?1")
-    Product findWithParentProductByProductId(Long productId);
+    @Query("select p from Product p left join fetch p.childProducts cp where p.id = ?1")
+    Product findWithChildProductsByProductId(Long productId);
 
-    @Query("select p from Product p left join fetch p.parentProduct pp left join fetch p.images im where p.id = ?1")
-    Product findWithImagesAndParentProductByProductId(Long productId);
+    @Query("select p from Product p left join fetch p.childProducts cp left join fetch p.images im where p.id = ?1")
+    Product findWithImagesAndChildProductsByProductId(Long productId);
 
-    @Query("select p.parentProduct from Product p where p.id = ?1")
-    Product findParentProductsByProductId(Long productId);
+    @Query("select p.childProducts from Product p where p.id = ?1")
+    List<Product> findChildProductsByProductId(Long productId);
 }
