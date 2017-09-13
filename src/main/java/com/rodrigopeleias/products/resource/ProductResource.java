@@ -49,19 +49,6 @@ public class ProductResource {
         return Response.noContent().build();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllProducts() {
-        return Response.ok(productService.findAll()).build();
-    }
-
-    @GET
-    @Path("/{productId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getProductById(@PathParam("productId") Long productId) {
-        return Response.ok(productService.findById(productId)).build();
-    }
-
     @POST
     @Path("/{productId}/images")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -156,6 +143,4 @@ public class ProductResource {
     public Response getSetOfImagesByProductId(@PathParam("id") Long productId) {
         return Response.ok(imageService.findByProduct(productId)).build();
     }
-
-
 }

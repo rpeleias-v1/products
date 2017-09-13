@@ -21,7 +21,9 @@ public class ProductService {
 
     public Product update(Long productId, Product product) {
         Product savedProduct = findProductOrThrowException(productId);
-        BeanUtils.copyProperties(product, savedProduct);
+        savedProduct.setName(product.getName());
+        savedProduct.setDescription(product.getDescription());
+        savedProduct.setParentProduct(product.getParentProduct());
         return productRepository.save(savedProduct);
     }
 

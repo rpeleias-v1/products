@@ -1,7 +1,6 @@
 package com.rodrigopeleias.products.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -10,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,11 +29,12 @@ public class Product implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "parent_product_id")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonBackReference
     private Product parentProduct;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentProduct")
-    private Set<Product> childProducts;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Set<Product> childProducts = new HashSet<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

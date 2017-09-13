@@ -30,7 +30,7 @@ public class ImageService {
     public Image update(Long productId, Long imageId, Image image) {
         productService.findProductOrThrowException(productId);
         Image savedImage = findImageOrThrowException(imageId);
-        BeanUtils.copyProperties(image, savedImage);
+        savedImage.setType(image.getType());
         return imageRepository.save(savedImage);
     }
 
