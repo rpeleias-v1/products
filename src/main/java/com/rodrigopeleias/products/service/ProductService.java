@@ -27,7 +27,6 @@ public class ProductService {
     }
 
     public void delete(Long productId) {
-        findProductOrThrowException(productId);
         productRepository.delete(productId);
     }
 
@@ -66,7 +65,7 @@ public class ProductService {
         return productRepository.findWithImagesAndParentProductByProductId(savedProduct.getId());
     }
 
-    public List<Product> findParentProductByProductId(Long productId) {
+    public Product findParentProductByProductId(Long productId) {
         Product savedProduct = findProductOrThrowException(productId);
         return productRepository.findParentProductsByProductId(savedProduct.getId());
     }

@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,7 +54,7 @@ public class ImageServiceTest {
     public void shouldThrowExceptionForNonExistingProduct() {
         Image image = new Image();
         image.setType(".JPEG");
-        imageService.save(20L, image);
+        imageService.save(200L, image);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class ImageServiceTest {
         Image savedImage = imageService.save(this.savedProduct.getId(), image);
         savedImage.setType(".PNG");
 
-        Image updatedImage = imageService.update(savedImage.getId(), savedProduct.getId(), savedImage);
+        Image updatedImage = imageService.update(savedProduct.getId(), savedImage.getId(), savedImage);
         assertThat(updatedImage.getId(), notNullValue());
         assertThat(updatedImage.getType(), equalTo(savedImage.getType()));
         assertThat(updatedImage.getProduct(), notNullValue());
@@ -83,9 +85,20 @@ public class ImageServiceTest {
     @Test(expected = ImageNotFoundException.class)
     public void shouldThrowExceptionWhenUpdateANonExistingImage() {
         Image image = new Image();
-        image.setId(20L);
+        image.setId(200L);
         image.setType(".JPEG");
 
         imageService.update(savedProduct.getId(), image.getId(), image);
+    }
+
+    @Test
+    public void shouldFindImagesByProduct() {
+        List<Image> images = imageService.findByProduct(savedProduct.getId());
+        assertThat(images.size(), is(1));
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenFindByNoProduct() {
+        imageService.findByProduct(200L);
     }
 }

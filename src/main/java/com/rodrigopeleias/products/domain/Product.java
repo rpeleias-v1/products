@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,7 @@ public class Product implements Serializable {
     @NotEmpty(message = "Product description field is required")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "parent_product_id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Product parentProduct;
@@ -31,7 +32,7 @@ public class Product implements Serializable {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonView
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
     public Long getId() {
         return id;

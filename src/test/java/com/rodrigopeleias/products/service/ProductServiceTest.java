@@ -1,24 +1,36 @@
 package com.rodrigopeleias.products.service;
 
+import com.rodrigopeleias.products.BaseTest;
+import com.rodrigopeleias.products.domain.Image;
 import com.rodrigopeleias.products.domain.Product;
 import com.rodrigopeleias.products.exception.ProductNotFoundException;
+import com.rodrigopeleias.products.repository.ImageRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ProductServiceTest {
+public class ProductServiceTest extends BaseTest{
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Before
+    public void setUp() {
+        super.setUp();
+    }
 
     @Test
     public void shouldCreateProduct() {
@@ -53,7 +65,7 @@ public class ProductServiceTest {
         Product product = new Product();
         product.setName("Update test");
         product.setDescription("Description");
-        productService.update(20L, product);
+        productService.update(200L, product);
     }
 
     @Test
@@ -68,8 +80,177 @@ public class ProductServiceTest {
         productService.findById(product.getId());
     }
 
-    @Test(expected = ProductNotFoundException.class)
-    public void shouldThrowAnExceptionWhenDeleteNonExistingProduct() {
-        productService.delete(20L);
+    @Test
+    public void shouldFindAllProducts() {
+        Product product = new Product();
+        product.setName("New product");
+        product.setDescription("Description");
+
+        Product computer = new Product();
+        computer.setName("A computer");
+        computer.setDescription("A personal computer");
+
+        productService.save(product);
+        productService.save(computer);
+
+        List<Product> products = productService.findAll();
+        assertThat(products.size(), is(2));
     }
+
+    @Test
+    public void shouldFindAllProductsWithImages() {
+        Product product = new Product();
+        product.setName("New product");
+        product.setDescription("Description");
+        productService.save(product);
+
+        Image jpeg = new Image();
+        jpeg.setType(".JPEG");
+        jpeg.setProduct(product);
+        imageRepository.save(jpeg);
+
+        List<Product> products = productService.findAllWithImages();
+        assertThat(products.size(), is(1));
+        assertThat(products.get(0).getImages().size(), is(1));
+    }
+
+    @Test
+    public void shouldFindAllProductsWithParentProduct() {
+        Product product = new Product();
+        product.setName("Computer");
+        product.setDescription("A desktop computer");
+        productService.save(product);
+
+        Product childProduct = new Product();
+        childProduct.setName("Mouse");
+        childProduct.setDescription("A computer mouse");
+        childProduct.setParentProduct(product);
+        productService.save(childProduct);
+
+        List<Product> products = productService.findAllWithParentProduct();
+        assertThat(products.size(), is(2));
+        assertThat(products.get(1).getParentProduct(),notNullValue());
+    }
+
+    @Test
+    public void shouldFindAllProductsWithImagesAndParentProduct() {
+        Product product = new Product();
+        product.setName("Computer");
+        product.setDescription("A desktop computer");
+        productService.save(product);
+
+        Image jpeg = new Image();
+        jpeg.setType(".JPEG");
+        jpeg.setProduct(product);
+        imageRepository.save(jpeg);
+
+        Product childProduct = new Product();
+        childProduct.setName("Mouse");
+        childProduct.setDescription("A computer mouse");
+        childProduct.setParentProduct(product);
+        productService.save(childProduct);
+
+        List<Product> products = productService.findAllWithImagesAndParentProduct();
+        assertThat(products.size(), is(2));
+        assertThat(products.get(1).getParentProduct(),notNullValue());
+        assertThat(products.get(0).getImages().size(), is(1));
+    }
+
+    @Test
+    public void shouldFindProductByIdWithImages() {
+        Product product = new Product();
+        product.setName("New product");
+        product.setDescription("Description");
+        product =  productService.save(product);
+
+        Image jpeg = new Image();
+        jpeg.setType(".JPEG");
+        jpeg.setProduct(product);
+        imageRepository.save(jpeg);
+
+        Product foundProduct = productService.findWithImagesByProductId(product.getId());
+        assertThat(foundProduct, notNullValue());
+        assertThat(foundProduct.getImages().size(), is(1));
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenFindInvalidProductWithImages() {
+        productService.findWithImagesByProductId(1000L);
+    }
+
+    @Test
+    public void shouldFindProductByIdWithParentProduct() {
+        Product product = new Product();
+        product.setName("Computer");
+        product.setDescription("A desktop computer");
+        product = productService.save(product);
+
+        Product childProduct = new Product();
+        childProduct.setName("Mouse");
+        childProduct.setDescription("A computer mouse");
+        childProduct.setParentProduct(product);
+        productService.save(childProduct);
+
+        Product savedProduct = productService.findWithParentProductByProductId(childProduct.getId());
+        assertThat(savedProduct, notNullValue());
+        assertThat(savedProduct.getParentProduct(),notNullValue());
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenFindInvalidProductWithParentProduct() {
+        productService.findWithParentProductByProductId(1000L);
+    }
+
+    @Test
+    public void shouldFindProductByIdWithImagesAndParentProduct() {
+        Product product = new Product();
+        product.setName("Computer");
+        product.setDescription("A desktop computer");
+        product = productService.save(product);
+
+        Product childProduct = new Product();
+        childProduct.setName("Mouse");
+        childProduct.setDescription("A computer mouse");
+        childProduct.setParentProduct(product);
+        productService.save(childProduct);
+
+        Image jpeg = new Image();
+        jpeg.setType(".JPEG");
+        jpeg.setProduct(childProduct);
+        imageRepository.save(jpeg);
+
+        Product savedProduct = productService.findWithImagesAndParentProductByProductId(childProduct.getId());
+        assertThat(savedProduct, notNullValue());
+        assertThat(savedProduct.getParentProduct(),notNullValue());
+        assertThat(savedProduct.getImages().size(), is(1));
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenFindInvalidProductWithImagesAndParentProduct() {
+        productService.findWithImagesAndParentProductByProductId(1000L);
+    }
+
+    @Test
+    public void shouldFindParentProductByProductId() {
+        Product product = new Product();
+        product.setName("Computer");
+        product.setDescription("A desktop computer");
+        product = productService.save(product);
+
+        Product childProduct = new Product();
+        childProduct.setName("Mouse");
+        childProduct.setDescription("A computer mouse");
+        childProduct.setParentProduct(product);
+        productService.save(childProduct);
+
+        Product parentProduct = productService.findParentProductByProductId(childProduct.getId());
+        assertThat(parentProduct, notNullValue());
+    }
+
+    @Test(expected = ProductNotFoundException.class)
+    public void shouldThrowExceptionWhenFindParentProductByInvalidProductId() {
+        productService.findParentProductByProductId(1000L);
+    }
+
+
 }
